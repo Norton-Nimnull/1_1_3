@@ -26,7 +26,7 @@ usi.saveUser("lila","turanga",(byte)25);
         for(int i=0; i< ulist.size();i++){
             System.out.println(ulist.get(i).toString());
         }
-        usi.dropUsersTable();
+        usi.cleanUsersTable();
         usi.dropUsersTable();
 
         }
