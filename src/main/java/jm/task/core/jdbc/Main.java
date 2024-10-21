@@ -24,7 +24,7 @@ usi.saveUser("Anne","Rice",(byte)80);
             System.out.println(ulist.get(i).toString());
         }
         usi.removeUserById(3L);
-        usi.dropUsersTable();
+        usi.cleanUsersTable();
         usi.dropUsersTable();
         usi.shutdown();
 
