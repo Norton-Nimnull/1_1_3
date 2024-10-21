@@ -26,8 +26,10 @@ usi.saveUser("lila","turanga",(byte)25);
         for(int i=0; i< ulist.size();i++){
             System.out.println(ulist.get(i).toString());
         }
+        usi.removeUserById(1L);
         usi.dropUsersTable();
         usi.dropUsersTable();
+        usi.shutdown();
 
         }
     }
