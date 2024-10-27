@@ -128,7 +128,5 @@ public class UserDaoJDBCImpl implements UserDao {
 
     }
 
-    public void shutdown() {
-      Util.shutdown();
-    }
+
 }
