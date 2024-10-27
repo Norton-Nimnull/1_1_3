@@ -14,24 +14,23 @@ public class Util {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static Connection con;
 
-    public Util() {
-        try {
-            Class.forName(JDBC_DRIVER);
-        } catch (ClassNotFoundException ce) {
-            ce.printStackTrace();
-        }
-        //try{con = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);}catch (SQLException se){se.printStackTrace();}
-        //try{stmt = con.createStatement();}catch (SQLException se){se.printStackTrace();}
-    }
-
     public static Connection getCon() {
-        con = null;
+        if (con == null){
         try {
             con = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);
         } catch (SQLException se) {
             se.printStackTrace();
         }
+        }
         return con;
     }
+    public static void shutdown(){
+        try {
+            con.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
 
 }

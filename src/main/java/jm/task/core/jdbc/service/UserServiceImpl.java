@@ -6,7 +6,7 @@ import jm.task.core.jdbc.model.User;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
-    private UserDaoJDBCImpl udao;
+    private UserDao udao;
 
     public UserServiceImpl() {
         udao = new UserDaoJDBCImpl();
@@ -42,7 +42,4 @@ public class UserServiceImpl implements UserService {
         udao.cleanUsersTable();
     }
 
-    public void shutdown() {
-        udao.shutdown();
-    }
 }

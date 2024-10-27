@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class UserDaoJDBCImpl implements UserDao {
                 " lastName VARCHAR (50), " +
                 " age TINYINT not NULL, " +
                 " PRIMARY KEY (id));";
-        try {
-            connection.createStatement().executeUpdate(SQL);
+        try (Statement stmt = connection.createStatement();) {
+            stmt.executeUpdate(SQL);
         } catch (SQLException se) {
             se.printStackTrace();
         }
@@ -38,8 +39,8 @@ public class UserDaoJDBCImpl implements UserDao {
     @Override
     public void dropUsersTable() {
         String SQL = "DROP TABLE IF EXISTS users";
-        try {
-            connection.createStatement().executeUpdate(SQL);
+        try (Statement stmt = connection.createStatement();) {
+            stmt.executeUpdate(SQL);
         } catch (SQLException se) {
             se.printStackTrace();
         }
@@ -48,9 +49,8 @@ public class UserDaoJDBCImpl implements UserDao {
     @Override
     public void saveUser(String name, String lastName, byte age) {
         String sql = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)";
-        try {
-            connection.setAutoCommit(false);
-            PreparedStatement stmt = connection.prepareStatement(sql);
+        try{connection.setAutoCommit(false);}catch (SQLException e){e.printStackTrace();}
+        try (PreparedStatement stmt = connection.prepareStatement(sql);) {
             stmt.setString(1, name);
             stmt.setString(2, lastName);
             stmt.setInt(3, age);
@@ -64,14 +64,16 @@ public class UserDaoJDBCImpl implements UserDao {
             }
             se.printStackTrace();
         }
+        finally {
+            try{connection.setAutoCommit(true);}catch (SQLException e){e.printStackTrace();}
+        }
     }
 
     @Override
     public void removeUserById(long id) {
         String sql = "DELETE FROM users WHERE id=?";
-        try {
-            connection.setAutoCommit(false);
-            PreparedStatement stmt = connection.prepareStatement(sql);
+        try {connection.setAutoCommit(false);} catch (SQLException e) {e.printStackTrace();}
+            try(PreparedStatement stmt = connection.prepareStatement(sql);){
             stmt.setLong(1, id);
             stmt.executeUpdate();
             connection.commit();
@@ -83,15 +85,16 @@ public class UserDaoJDBCImpl implements UserDao {
             }
             se.printStackTrace();
         }
+        finally {
+                try{connection.setAutoCommit(true);}catch (SQLException e){e.printStackTrace();}
+            }
     }
 
     @Override
     public List<User> getAllUsers() {
-        ResultSet results = null;
         String SQL = "SELECT * FROM users";
         List<User> list = new ArrayList<>();
-        try {
-            results = connection.createStatement().executeQuery(SQL);
+        try (ResultSet results = connection.createStatement().executeQuery(SQL);){
             User u;
             while (results.next()) {
                 u = new User(results.getString(2), results.getString(3), results.getByte(4));
@@ -107,9 +110,9 @@ public class UserDaoJDBCImpl implements UserDao {
     @Override
     public void cleanUsersTable() {
         String SQL = "DELETE FROM users";
-        try {
-            connection.setAutoCommit(false);
-            connection.createStatement().executeUpdate(SQL);
+        try {connection.setAutoCommit(false);} catch (SQLException se) {se.printStackTrace();}
+           try(Statement stmt = connection.createStatement();){
+        stmt.executeUpdate(SQL);
             connection.commit();
         } catch (SQLException se) {
             try {
@@ -119,14 +122,13 @@ public class UserDaoJDBCImpl implements UserDao {
             }
             se.printStackTrace();
         }
+        finally {
+               try{connection.setAutoCommit(true);}catch (SQLException e){e.printStackTrace();}
+           }
 
     }
 
     public void shutdown() {
-        try {
-            connection.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
+      Util.shutdown();
     }
 }
